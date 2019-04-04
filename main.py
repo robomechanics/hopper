@@ -1,8 +1,10 @@
 import serial
 
-ser = serial.Serial('/dev/ttyUSB0', 115200) # open serial port with Arduino
+ser = serial.Serial('/dev/tty.usbmodem14101', 38400) # open serial port with Arduino
 
-while(true):
-	imu_update = ser.readline()
-	print(type(imu_update))
+while(True):
+	imu_update_whitespacechars = ser.readline().split(',')
+	imu_update_str = map(str.strip, imu_update_whitespacechars)
+	imu_update = map(float, imu_update_str)
+	[ax, ay, az, y, p, r] = imu_update
 	print(imu_update)
