@@ -2,6 +2,13 @@
 Organizing code for Hopper platform
 
 ### Setup
+
+##### Odrive and motor setup
+Follow the instructions at https://docs.odriverobotics.com/
+
+Test your setup with odrive_script.py in this directory
+
+
 ##### IMU wiring
 ![IMU wiring](content/MPU6050_wiring.png)
 
