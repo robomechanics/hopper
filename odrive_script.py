@@ -19,5 +19,5 @@ odrv0.axis0.requested_state = AXIS_STATE_CLOSED_LOOP_CONTROL
 print("Closed loop control.")
 
 print("Current bus voltage is " + str(odrv0.vbus_voltage) + "V")
-print("Moving to 3.14")
+print("Moving to position 0")
 odrv0.axis0.controller.pos_setpoint = 0
