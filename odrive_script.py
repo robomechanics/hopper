@@ -63,7 +63,7 @@ vs_custom = np.divide(ps_diff,ts_diff)
 
 np.savetxt('ts.csv', ts)
 np.savetxt('ps.csv', ps)
-np.savetxt('ys.txt', ys)
+np.savetxt('ys.csv', ys)
 
 print(ts.shape)
 print(vs_custom.shape)

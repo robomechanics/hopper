@@ -1,0 +1,13 @@
+clear all
+close all
+load('data/odrive_position_data.mat')
+
+tdiff = diff(ts);
+v_estimate = diff(ps);
+
+filtered_v = lowpass(v_estimate, 0,1);
+
+figure(1)
+hold on
+plot(ts(1:end-1), v_estimate)
+plot(ts(1:end-1), filtered_v)
