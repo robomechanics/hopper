@@ -12,7 +12,7 @@ time.sleep(2)
 #print("Starting calibratiom sequence on axis0...")
 #odrv0.axis0.requested_state = AXIS_STATE_FULL_CALIBRATION_SEQUENCE
 #while odrv0.axis0.current_state != AXIS_STATE_IDLE:
-#	time.sleep(0.05)
+	#time.sleep(0.05)
 #print("Axis0 calibrated.")
 print("Using prior calibration stored in configuration for Axis0.")
 
@@ -26,8 +26,10 @@ odrv0.axis0.controller.pos_setpoint = 0
 
 odrv0.axis0.controller.config.control_mode = CTRL_MODE_VELOCITY_CONTROL
 
+time.sleep(10)
+
 t0 = time.perf_counter()
-odrv0.axis0.controller.vel_setpoint = 5000
+odrv0.axis0.controller.vel_setpoint = 15000
 
 time.sleep(1)
 

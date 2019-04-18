@@ -1,6 +1,6 @@
 clear all
 close all
-load('data/odrive_position_data.mat')
+load('data/odrive_position_data_5000.mat')
 
 tdiff = diff(ts);
 pdiff = diff(ps);
