@@ -4,8 +4,11 @@ import time
 import numpy as np
 from matplotlib import pyplot as plt
 
+def counts_to_radians(counts):
+	return counts*2*np.pi/8192
 
 # Odrive setup
+
 print("Finding an odrive...")
 odrv0 = odrive.find_any()
 print("Connected.")
@@ -27,9 +30,7 @@ odrv0.axis0.controller.pos_setpoint = 0
 
 # Feedforward Term
 
-
-
-time.sleep(2)
+time.sleep(3)
 
 t0 = time.perf_counter()
 
@@ -37,48 +38,72 @@ t = time.perf_counter() - t0
 
 
 # Trajectory features
-w_hz = 2 #frequency of sine wave in hz
+w_hz = 0.5 #frequency of sine wave in hz
 w = 2 * np.pi * w_hz
 A = 2000 #amplitude of sine wave in counts
 
-
-# Tunable properties
-I_load = 0.1 #m^2*kg
+# Motor setup properties
+I_rotor = 0.00008 #m^2*kg, measured from CAD and scaled by mass ratio (rotor inertia only)
+I_load = 0.0001351255 + 0.000000375 + .001296 # rod, attachment screws, added weight m^2*kg
 kv = 135
-kt = 8.27/kv
+kt = 1/(kv*2*np.pi/60)
 
+print(kt)
 
 pds = np.array([])
+vds = np.array([])
+ads = np.array([])
+tauds = np.array([])
+cds = np.array([])
 ps = np.array([])
 ts = np.array([])
 
-
-while(t < 10):
+while(t < 2):
 	t = time.perf_counter() - t0
 
 	# Compute desired values from desired trajectory
 	p_desired = A * np.sin(w * t)
 	v_desired = A * w * np.cos(w * t)
-	a_desired = -A * w^2 * np.sin(w*t)
+	a_desired = - counts_to_radians(A) * w * w * np.sin(w*t)
 
 	# Transform acceleration to current
-	tau = I_load * a_desired
-	cur_desired = tau/kt
+	tau_desired = I_load * a_desired
+	cur_desired = tau_desired/kt
 
-	# Update setpoints 
+	# Update setpoints
+	
 	odrv0.axis0.controller.pos_setpoint = p_desired
 	odrv0.axis0.controller.vel_setpoint = v_desired
-	odrv0.axis0.controller.current_setpoint = 0
+	odrv0.axis0.controller.current_setpoint = cur_desired
 
 	p = odrv0.axis0.encoder.pos_estimate
+	
 	#print("Position Estimate: ", p)
-	#print("Position Desired: ", p_desired)
+	print("Position Desired: ", p_desired)
+	
 	pds = np.append(pds,p_desired)
+	vds = np.append(vds,v_desired)
+	ads = np.append(ads,a_desired)
+	tauds = np.append(tauds, tau_desired)
+	cds = np.append(cds, cur_desired)
 	ps = np.append(ps,p)
 	ts = np.append(ts,t)
 
+
 odrv0.axis0.requested_state = AXIS_STATE_IDLE
 
-#np.savetxt('../data/ts_2hz_p.csv', ts)
-#np.savetxt('../data/ps_2hz_p.csv', ps)
-#np.savetxt('../data/pds_2hz_p.csv', pds)
+#plt.plot(ts, pds) # desired position plot
+#plt.plot(ts, vds) # desired velocity plot
+#plt.plot(ts, ads) # desired acceleration plot
+#plt.plot(ts, tauds) # desired torque plot
+#plt.plot(ts, cds) # desired current plot
+#plt.show()
+
+
+np.savetxt('../data/ts_6hz_pv.csv', ts)
+np.savetxt('../data/ps_6hz_pv.csv', ps)
+np.savetxt('../data/pds_6hz_pv.csv', pds)
+
+plt.plot(ts, pds - ps) # desired position plot
+#plt.plot(ts, ps) # measured position plot
+plt.show()

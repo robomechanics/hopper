@@ -15,8 +15,6 @@ odrv0.axis0.controller.config.vel_limit = 50000
 odrv0.axis0.motor.config.pole_pairs = 21
 odrv0.axis0.motor.config.motor_type = MOTOR_TYPE_HIGH_CURRENT
 odrv0.axis0.encoder.config.cpr = 8192
-odrv0.axis0.controller.config.ff_pos_gain = 0.0008
-odrv0.axis0.controller.config.ff_vel_gain = 0.0002
 odrv0.axis0.controller.config.vel_limit = 8192 * 15 # 15 revs/s
 
 print("Axis0 configured.")
