@@ -35,10 +35,9 @@ def main():
 
 		print("Moving to position 0")
 		odrv0.axis0.controller.config.control_mode = CTRL_MODE_POSITION_CONTROL
-		odrv0.axis0.controller.pos_setpoint = 0
-
-		# Feedforward Term
-		time.sleep(3)
+		
+		odrv0.axis0.controller.move_to_pos(0)
+		time.sleep(5)
 
 	t0 = time.perf_counter()
 
@@ -46,13 +45,13 @@ def main():
 
 
 	# Trajectory features
-	w_hz = 0.5 #frequency of sine wave in hz
+	w_hz = 1 #frequency of sine wave in hz
 	w = 2 * np.pi * w_hz
 	A = 2000 #amplitude of sine wave in counts
 
 	# Motor setup properties
 	I_rotor = 0.00008 #m^2*kg, measured from CAD and scaled by mass ratio (rotor inertia only)
-	I_load = 0.0001351255 + 0.000000375 + .001296 # rod, attachment screws, added weight m^2*kg
+	I_load = I_rotor + 0.0001351255 + 0.000000375 + .001296 # rod, attachment screws, added weight m^2*kg
 	kv = 135
 	kt = 1/(kv*2*np.pi/60)
 
@@ -65,7 +64,7 @@ def main():
 	ps = np.array([])
 	ts = np.array([])
 
-	while(t < 2):
+	while(t < 5):
 		t = time.perf_counter() - t0
 
 		# Compute desired values from desired trajectory
@@ -97,20 +96,24 @@ def main():
 
 
 	if (results.use_hardware):
+		odrv0.axis0.controller.move_to_pos(0)
+		
 		odrv0.axis0.requested_state = AXIS_STATE_IDLE
-		np.savetxt('../data/ts_6hz_pv.csv', ts)
-		np.savetxt('../data/ps_6hz_pv.csv', ps)
-		np.savetxt('../data/pds_6hz_pv.csv', pds)
-
+		#np.savetxt('../data/ts_2hz_pv.csv', ts)
+		#np.savetxt('../data/ps_2hz_pv.csv', ps)
+		#np.savetxt('../data/pds_2hz_pv.csv', pds)
+		plt.plot(ts, pds)
+		plt.plot(ts, ps)
+		plt.show()
 		plt.plot(ts, pds - ps) # desired position plot
 		#plt.plot(ts, ps) # measured position plot
 		plt.show()
 	else:
-		plt.plot(ts, pds) # desired position plot
-		plt.plot(ts, vds) # desired velocity plot
-		plt.plot(ts, ads) # desired acceleration plot
+		#plt.plot(ts, pds) # desired position plot
+		#plt.plot(ts, vds) # desired velocity plot
+		#plt.plot(ts, ads) # desired acceleration plot
 		plt.plot(ts, tauds) # desired torque plot
-		plt.plot(ts, cds) # desired current plot
+		#plt.plot(ts, cds) # desired current plot
 		plt.show()
 
 

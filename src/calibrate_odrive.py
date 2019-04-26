@@ -11,7 +11,7 @@ print("Current bus voltage is " + str(odrv0.vbus_voltage) + "V")
 time.sleep(1)
 print("Configuring Axis0 (T-motor kv135)...")
 odrv0.axis0.motor.config.current_lim = 20
-odrv0.axis0.controller.config.vel_limit = 50000
+odrv0.axis0.controller.config.vel_limit = 30000
 odrv0.axis0.motor.config.pole_pairs = 21
 odrv0.axis0.motor.config.motor_type = MOTOR_TYPE_HIGH_CURRENT
 odrv0.axis0.encoder.config.cpr = 8192
